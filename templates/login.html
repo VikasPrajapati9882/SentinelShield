@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>
+SentinelShield Login
+</title>
+
+
+<style>
+
+* {
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+
+
+body {
+
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    linear-gradient(135deg,#020617,#0f172a);
+
+    overflow:hidden;
+
+}
+
+
+
+/* Animated Background */
+
+body::before {
+
+    content:"";
+    position:absolute;
+
+    width:500px;
+    height:500px;
+
+    background:#38bdf8;
+
+    filter:blur(150px);
+
+    opacity:0.25;
+
+    animation:move 6s infinite alternate;
+
+}
+
+
+
+@keyframes move {
+
+from {
+
+transform:translate(-200px,-100px);
+
+}
+
+
+to {
+
+transform:translate(200px,100px);
+
+}
+
+}
+
+
+
+/* Login Box */
+
+
+.login-box {
+
+
+    position:relative;
+
+    width:380px;
+
+    padding:40px;
+
+    background:rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(15px);
+
+    border-radius:20px;
+
+    border:1px solid rgba(255,255,255,0.2);
+
+    box-shadow:0 0 30px rgba(0,0,0,0.5);
+
+    animation:show 1s ease;
+
+
+}
+
+
+
+@keyframes show {
+
+from {
+
+opacity:0;
+
+transform:translateY(-50px);
+
+}
+
+
+to {
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+
+
+
+/* Logo */
+
+
+.logo {
+
+
+    text-align:center;
+
+    font-size:50px;
+
+    animation:pulse 2s infinite;
+
+}
+
+
+
+@keyframes pulse {
+
+50% {
+
+transform:scale(1.1);
+
+}
+
+}
+
+
+
+h1 {
+
+    text-align:center;
+
+    color:#38bdf8;
+
+    margin-bottom:30px;
+
+}
+
+
+
+
+/* Inputs */
+
+
+.input-box {
+
+
+    margin-bottom:20px;
+
+}
+
+
+
+label {
+
+
+    color:#cbd5e1;
+
+    display:block;
+
+    margin-bottom:8px;
+
+}
+
+
+
+input {
+
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:8px;
+
+    background:#1e293b;
+
+    color:white;
+
+    font-size:15px;
+
+
+}
+
+
+
+input:focus {
+
+    border:1px solid #38bdf8;
+
+    box-shadow:0 0 10px #38bdf8;
+
+}
+
+
+
+/* Button */
+
+
+button {
+
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#38bdf8;
+
+    color:#020617;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+
+
+button:hover {
+
+
+    transform:translateY(-3px);
+
+    box-shadow:0 0 20px #38bdf8;
+
+}
+
+
+
+
+.footer {
+
+
+    text-align:center;
+
+    color:#94a3b8;
+
+    margin-top:20px;
+
+    font-size:13px;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+
+
+<body>
+
+
+
+<div class="login-box">
+
+
+<div class="logo">
+
+🛡️
+
+</div>
+
+
+
+<h1>
+SentinelShield
+</h1>
+
+
+
+
+<form action="/" method="POST">
+
+
+
+<div class="input-box">
+
+
+<label>
+Username
+</label>
+
+
+<input 
+type="text"
+name="username"
+placeholder="Enter username"
+required>
+
+
+</div>
+
+
+
+
+
+<div class="input-box">
+
+
+<label>
+Password
+</label>
+
+
+<input 
+type="password"
+name="password"
+placeholder="Enter password"
+required>
+
+
+</div>
+
+
+
+
+
+<button type="submit">
+
+Secure Login
+
+</button>
+
+
+
+
+</form>
+
+
+
+
+<div class="footer">
+
+SOC Monitoring System
+
+</div>
+
+
+
+</div>
+
+
+
+
+</body>
+
+
+</html>

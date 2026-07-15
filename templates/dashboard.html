@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>SentinelShield SOC Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+
+<style>
+
+
+body {
+
+    margin:0;
+    background:#0b1120;
+    color:white;
+    font-family:Arial, sans-serif;
+
+}
+
+
+
+/* Header */
+
+.header {
+
+    padding:25px;
+    border-bottom:1px solid #334155;
+
+}
+
+
+.header h1 {
+
+    color:#38bdf8;
+    margin:0;
+    font-size:32px;
+
+}
+
+
+.header p {
+
+    margin-top:15px;
+
+}
+
+
+
+
+
+/* Main Dashboard Rows */
+
+
+.dashboard-row {
+
+    display:grid;
+
+    grid-template-columns: 1fr 1fr 1fr;
+
+    gap:20px;
+
+    padding:20px;
+
+}
+
+
+
+
+/* Chart Card */
+
+.chart-box {
+
+    background:#1e293b;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    height:300px;
+
+}
+
+
+
+.chart-box canvas {
+
+    width:100% !important;
+
+    height:220px !important;
+
+}
+
+
+
+.chart-box h2 {
+
+    color:#38bdf8;
+    margin-top: 0;
+    font-size: 18px;
+
+}
+
+
+
+canvas {
+
+    max-height:230px;
+
+}
+
+
+
+
+
+/* Metrics Grid */
+
+
+.metrics-grid {
+
+     display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    width:100%;
+}
+
+
+
+.metric-card {
+    
+    display: flex;
+    justify-content: center; /* horizontal center */
+    align-items: center;     /* vertical center */
+    flex-direction: column;
+    background:#1e293b;
+    border-radius:8px;
+    padding:10px;
+    height:145px;
+    position: relative;
+
+}
+
+.metric-card h3 {
+
+    color:#38bdf8;
+    font-size:14px;
+    align-self: flex-start;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    margin: 0;
+
+}
+
+
+
+.metric-card h2 {
+
+     font-size:25px;
+
+}
+/* Summary Cards */
+
+
+.summary-container {
+
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    padding:20px;
+
+
+}
+
+
+
+
+.summary-card {
+
+
+    background:#1e293b;
+    border-radius:10px;
+    padding: 10px;
+
+
+}
+
+
+
+.summary-card h3 {
+
+
+    color:#38bdf8;
+
+
+}
+
+
+
+.online {
+
+
+    color:#22c55e;
+    font-size:25px;
+
+}
+
+
+
+
+
+
+
+/* Alert Table */
+
+
+.alert-section {
+
+
+    padding:20px;
+
+
+}
+
+
+
+.alert-section h2 {
+
+
+    color:#ffffff;
+
+
+}
+
+
+
+
+table {
+
+
+    width:100%;
+    border-collapse:collapse;
+    background:#111827;
+
+
+}
+
+
+
+th {
+
+
+    background:#1e293b;
+    color:#38bdf8;
+    padding:15px;
+    text-align:left;
+
+
+}
+
+
+
+td {
+
+
+    padding:15px;
+    border-bottom:1px solid #334155;
+
+
+}
+
+
+
+
+
+
+/* Severity Badge */
+
+
+.badge {
+
+
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+
+
+}
+
+
+
+.HIGH {
+
+
+    background:#ef4444;
+
+}
+
+
+
+.MEDIUM {
+
+
+    background:#f59e0b;
+
+}
+
+
+
+.LOW {
+
+
+    background:#22c55e;
+
+}
+
+
+.alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #263238;
+}
+
+.alert-header h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 22px;
+}
+
+
+/* Export button */
+.export-btn {
+    background: #00bcd4;        /* cyber theme cyan */
+    color: #08111f;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.export-btn:hover {
+    background: #00e5ff;
+    box-shadow: 0 0 12px #00bcd4;
+}
+
+
+.dashboard-header {
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:20px;
+
+    background:#0b1120;
+
+    border-bottom:1px solid #1e293b;
+
+}
+
+
+/* Title Section */
+
+.dashboard-title h1 {
+
+    margin:0;
+
+    color:#00b7ff;
+
+    font-size:30px;
+
+    font-weight:700;
+
+}
+
+
+.dashboard-title p {
+
+    margin-top:8px;
+
+    color:#cbd5e1;
+
+    font-size:15px;
+
+}
+
+
+td.action-cell,
+td.status-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.edit-btn {
+    width: 80px;      /* Same width for every button */
+    height: 36px;
+    display: inline-block;
+}
+
+
+.modal {
+
+
+display:none;
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.6);
+
+
+justify-content:center;
+
+align-items:center;
+
+
+}
+
+
+
+.modal-box {
+
+
+background:#1e293b;
+
+padding:25px;
+
+width:350px;
+
+border-radius:10px;
+
+
+}
+
+
+
+.modal-box input,
+.modal-box select,
+.modal-box textarea {
+
+
+width:100%;
+
+margin-top:10px;
+
+padding:10px;
+
+background:#111827;
+
+color:white;
+
+border:1px solid #334155;
+
+border-radius:5px;
+
+
+}
+
+
+
+.modal-box button {
+
+
+margin-top:15px;
+
+padding:10px 20px;
+
+background:#38bdf8;
+
+border:none;
+
+border-radius:5px;
+
+cursor:pointer;
+
+
+}
+
+
+
+.close {
+
+
+float:right;
+
+font-size:25px;
+
+cursor:pointer;
+
+
+}
+
+
+
+.edit-btn {
+
+
+background:#38bdf8;
+
+border:none;
+
+padding:7px 15px;
+
+border-radius:5px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+
+}
+
+
+
+/* User Profile */
+
+.user-profile {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    background:#111827;
+
+    padding:10px 18px;
+
+    border-radius:12px;
+
+    border:1px solid #263445;
+
+    box-shadow:0 0 10px rgba(0,188,212,0.15);
+
+}
+
+
+.profile-icon {
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+
+    background:#00bcd4;
+
+    color:#08111f;
+
+}
+
+
+.profile-details {
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.username {
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:600;
+
+}
+
+
+.role {
+
+    margin-top:4px;
+
+    color:#00e5ff;
+
+    font-size:14px;
+
+    background:#0f2430;
+
+    padding:3px 8px;
+
+    border-radius:6px;
+
+    width:fit-content;
+
+}
+
+
+
+.profile-container {
+
+    position:relative;
+
+}
+
+
+/* Popup menu */
+
+.profile-menu {
+
+    display:none;
+
+    position:absolute;
+
+    right:0;
+
+    top:65px;
+
+    width:170px;
+
+    background:#111827;
+
+    border:1px solid #263445;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    box-shadow:0 0 15px rgba(0,188,212,0.25);
+
+    z-index:1000;
+
+}
+
+
+.profile-menu a {
+
+    display:block;
+
+    padding:12px 15px;
+
+    color:#e2e8f0;
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    transition:0.3s;
+
+}
+
+
+.profile-menu a:hover {
+
+    background:#00bcd4;
+
+    color:#08111f;
+
+}
+
+
+.profile-menu .logout {
+
+    color:#ff6b6b;
+
+}
+
+
+.profile-menu .logout:hover {
+
+    background:#ff4757;
+
+    color:white;
+
+}
+
+
+.status {
+
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+
+}
+
+.OPEN {
+
+    background:#ef4444;
+
+}
+
+
+.INVESTIGATING {
+
+    background:#f59e0b;
+
+}
+
+
+.RESOLVED {
+
+    background:#22c55e;
+
+}
+
+
+.action-cell {
+
+    text-align:center;
+    vertical-align:middle;
+
+}
+
+
+.status-form {
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+
+}
+
+
+
+.status-select {
+
+    width:130px;
+    padding:6px;
+
+    background:#1e293b;
+    color:white;
+
+    border:1px solid #334155;
+    border-radius:5px;
+
+}
+
+
+
+.edit-btn {
+
+    display:inline-block;
+
+    padding:8px 18px;
+
+    background:#38bdf8;
+
+    color:#0b1120;
+
+    text-decoration:none;
+
+    border-radius:6px;
+
+    font-weight:bold;
+
+}
+
+
+.edit-btn:hover {
+
+    background:#0ea5e9;
+
+}
+
+
+
+.update-btn {
+
+    width:80px;
+
+    padding:6px 10px;
+
+    background:#38bdf8;
+
+    color:#0b1120;
+
+    border:none;
+
+    border-radius:5px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+
+
+.update-btn:hover {
+
+    background:#0ea5e9;
+
+}
+
+
+.status {
+
+    display:inline-block;
+
+    min-width:70px;
+
+    text-align:center;
+
+}
+
+</style>
+
+
+</head>
+
+
+
+
+<body>
+
+
+
+<!-- <div class="header">
+
+
+<h1>🛡 SentinelShield SOC Dashboard</h1>
+
+<p>Real-Time Security Monitoring System</p>
+
+
+
+</div> -->
+
+
+<div class="dashboard-header">
+
+    <!-- Dashboard Branding -->
+    <div class="dashboard-title">
+
+        <h1>
+            🛡 SentinelShield SOC Dashboard
+        </h1>
+
+        <p>
+            Real-Time Security Monitoring System
+        </p>
+
+    </div>
+
+
+<div class="profile-container">
+
+    <div class="user-profile" onclick="toggleProfileMenu()">
+
+        <div class="profile-icon">
+            👤
+        </div>
+
+        <div class="profile-details">
+
+            <div class="username">
+                {{ session.username }}
+            </div>
+
+            <div class="role">
+                🛡 {{ session.role }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Profile Popup -->
+
+    <div class="profile-menu" id="profileMenu">
+
+        <a href="/profile">
+            👤 Profile
+        </a>
+
+        <a href="/logout" class="logout">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</div>
+</div>
+
+<!-- Severity Section -->
+
+
+<div class="dashboard-row">
+
+<div class="chart-box">
+
+
+<h2>Severity Chart</h2>
+
+
+<canvas id="severityChart"></canvas>
+
+
+</div>
+
+
+<div class="chart-box">
+
+
+<h2>Attacks Chart</h2>
+
+
+<canvas id="attackChart"></canvas>
+
+
+</div>
+
+
+
+
+
+
+<div class="metrics-grid">
+
+
+<div class="metric-card">
+
+<h3>High Alerts</h3>
+
+<h2 id="highAlerts" >{{metrics.high_alerts}}</h2>
+
+</div>
+
+
+
+
+<div class="metric-card">
+
+<h3>Medium Alerts</h3>
+
+<h2 id="mediumAlerts">{{metrics.medium_alerts}}</h2>
+
+</div>
+
+
+
+
+
+<div class="metric-card">
+
+<h3>Low Alerts</h3>
+
+<h2 id="lowAlerts" >{{metrics.low_alerts}}</h2>
+
+</div>
+
+
+
+
+
+<div class="metric-card">
+
+<h3>Malicious IPs</h3>
+
+<h2 id="maliciousIPs" >{{metrics.malicious_ips}}</h2>
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- Summary Cards -->
+
+
+
+<div class="summary-container">
+
+
+
+<div class="summary-card">
+
+
+<h3>Total Alerts</h3>
+
+<h2 id="totalAlerts">{{metrics.total_alerts}}</h2>
+
+
+</div>
+
+
+
+
+
+<div class="summary-card">
+
+
+<h3>Critical Events</h3>
+
+<h2 id="criticalEvents" >{{metrics.high_alerts}}</h2>
+
+
+</div>
+
+
+
+
+
+<div class="summary-card">
+
+
+<h3>System Status</h3>
+
+<h2 class="online">ONLINE</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Alerts Table -->
+
+
+
+<div class="alert-section">
+
+
+
+<div class="alert-header">
+
+<h2>🚨 Recent Security Alerts</h2>
+
+{% if session.role == "Admin" %}
+
+<button class="export-btn">
+Export PDF Report
+</button>
+
+{% endif %}
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Event</th>
+<th>IP Address</th>
+<th>Severity</th>
+<th>Timestamp</th>
+<th>Threat Status</th>
+<th>Threat Score</th>
+<th>Incident Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="alertTableBody">
+
+
+{% for alert in alerts %}
+
+
+<tr>
+
+
+<td>
+{{ alert.event }}
+</td>
+
+
+<td>
+{{ alert.ip_address }}
+</td>
+
+
+
+<td>
+
+<span class="badge {{ alert.severity }}">
+
+{{ alert.severity }}
+
+</span>
+
+</td>
+
+
+
+
+<td>
+{{ alert.timestamp }}
+</td>
+
+
+
+<td>
+{{ alert.threat_status }}
+</td>
+
+
+
+<td>
+{{ alert.threat_score }}
+</td>
+
+
+
+<td>
+
+<span class="status {{alert.incident_status}}">
+
+{{alert.incident_status}}
+
+</span>
+
+</td>
+
+<td class="btn-cell">
+
+<button 
+class="edit-btn"
+onclick="openIncidentModal('{{alert.id}}')">
+
+Edit
+
+</button>
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+
+const socket = io();
+
+
+
+socket.on("connect", function(){
+
+    console.log("Connected to SentinelShield WebSocket");
+
+});
+
+
+
+socket.on("new_alert", function(alert){
+
+
+    console.log("New Alert Received:");
+    console.log(alert);
+
+
+
+    // ----------------------
+    // Update Alert Table
+    // ----------------------
+
+    let table = document.getElementById("alertTableBody");
+
+
+    let row = table.insertRow(0);
+
+
+    row.innerHTML = `
+
+    <td>${alert.event}</td>
+
+    <td>${alert.ip_address}</td>
+
+    <td>
+        <span class="badge ${alert.severity}">
+            ${alert.severity}
+        </span>
+    </td>
+
+    <td>${alert.timestamp}</td>
+
+    <td>${alert.threat_status}</td>
+
+    <td>${alert.threat_score}</td>
+
+    <td>
+    <span class="status OPEN">
+        ${alert.incident_status}
+    </span>
+</td>
+
+<td>
+    <button
+        class="edit-btn"
+        onclick="openIncidentModal(${alert.id})">
+        Edit
+    </button>
+</td>
+
+    `;
+
+
+
+
+    // ----------------------
+    // Update Total Alerts
+    // ----------------------
+
+    let total = document.getElementById("totalAlerts");
+
+    total.innerHTML = Number(total.innerHTML) + 1;
+
+
+
+    // Update Critical Events
+
+if(alert.severity === "HIGH"){
+
+    let critical =
+    document.getElementById("criticalEvents");
+
+
+    critical.innerHTML =
+    Number(critical.innerHTML) + 1;
+
+}
+
+
+
+
+    // ----------------------
+    // Update Severity Metrics
+    // ----------------------
+
+    if(alert.severity === "HIGH"){
+
+        let high = document.getElementById("highAlerts");
+
+        high.innerHTML = Number(high.innerHTML) + 1;
+
+    }
+
+
+
+    if(alert.severity === "MEDIUM"){
+
+        let medium = document.getElementById("mediumAlerts");
+
+        medium.innerHTML = Number(medium.innerHTML) + 1;
+
+    }
+
+
+
+    if(alert.severity === "LOW"){
+
+        let low = document.getElementById("lowAlerts");
+
+        low.innerHTML = Number(low.innerHTML) + 1;
+
+    }
+
+
+      if(alert.severity){
+
+        let index =
+        severityLabels.indexOf(alert.severity);
+
+
+        if(index !== -1){
+
+            severityData[index]++;
+
+        }
+
+
+        severityChart.update();
+
+        let attackIndex =
+attackLabels.indexOf(alert.event);
+
+
+if(attackIndex !== -1){
+
+    attackData[attackIndex]++;
+
+}
+else{
+
+    attackLabels.push(alert.event);
+
+    attackData.push(1);
+
+}
+
+
+attackChart.update();
+
+    }
+
+
+
+
+
+});
+
+
+
+// -------------------------
+// Severity Chart
+// -------------------------
+
+let severityLabels = [];
+let severityData = [];
+
+
+{% for item in statistics %}
+
+severityLabels.push("{{ item.severity }}");
+severityData.push(Number("{{ item.total }}"));
+
+{% endfor %}
+
+
+let severityChart = new Chart(
+    document.getElementById("severityChart"),
+    {
+        type: "doughnut",
+
+        data: {
+
+            labels: severityLabels,
+
+            datasets: [{
+                data: severityData
+            }]
+
+        },
+        options: {
+    plugins: {
+        legend: {
+            position: 'right',
+            labels: {
+                boxWidth: 20,
+                padding: 15,
+                font: {
+                    size: 10
+                }
+            }
+        }
+    }
+}
+        
+
+    }
+);
+
+
+
+
+// -------------------------
+// Attack Type Chart
+// -------------------------
+
+let attackLabels = [];
+let attackData = [];
+
+
+{% for item in attack_statistics %}
+
+attackLabels.push("{{ item.event }}");
+attackData.push(Number("{{ item.total }}"));
+
+{% endfor %}
+
+
+
+let attackChart = new Chart(
+    document.getElementById("attackChart"),
+    {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: attackLabels,
+
+            datasets: [{
+
+                data: attackData
+
+            }]
+
+        },
+        options: {
+    plugins: {
+        legend: {
+            position: 'right',
+            labels: {
+                boxWidth: 12,
+                padding: 15,
+                font: {
+                    size: 12
+                }
+            }
+        }
+    }
+}
+
+    }
+);
+
+
+
+function toggleProfileMenu(){
+
+    let menu = document.getElementById("profileMenu");
+
+    if(menu.style.display === "block")
+    {
+        menu.style.display="none";
+    }
+    else
+    {
+        menu.style.display="block";
+    }
+
+}
+
+
+// Close popup when clicking outside
+
+document.addEventListener("click", function(event){
+
+    let profile = document.querySelector(".profile-container");
+
+    let menu = document.getElementById("profileMenu");
+
+
+    if(!profile.contains(event.target))
+    {
+        menu.style.display="none";
+    }
+
+});
+
+
+function openIncidentModal(id){
+
+    document.getElementById(
+        "incidentModal"
+    ).style.display="flex";
+
+
+    document.getElementById(
+        "incidentId"
+    ).value=id;
+
+}
+
+
+function closeIncidentModal(){
+
+
+    document.getElementById(
+        "incidentModal"
+    ).style.display="none";
+
+
+}
+
+
+</script>
+
+<div id="incidentModal" class="modal">
+
+
+<div class="modal-box">
+
+
+<span class="close"
+onclick="closeIncidentModal()">
+×
+</span>
+
+
+<h2>
+Update Incident
+</h2>
+
+
+
+<form method="POST" action="/update_incident">
+
+
+<input 
+type="hidden"
+name="alert_id"
+id="incidentId">
+
+
+
+<label>
+Assignee
+</label>
+
+<input
+type="text"
+name="assignee"
+value="{{session.username}}"
+readonly>
+
+
+
+
+<label>
+Status
+</label>
+
+
+<select name="status">
+
+<option value="OPEN">
+OPEN
+</option>
+
+<option value="INVESTIGATING">
+INVESTIGATING
+</option>
+
+<option value="RESOLVED">
+RESOLVED
+</option>
+
+</select>
+
+
+
+<label>
+Comment
+</label>
+
+
+<textarea
+name="comment"
+placeholder="Write investigation notes..."
+></textarea>
+
+
+
+<button type="submit">
+Save
+</button>
+
+
+</form>
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>
