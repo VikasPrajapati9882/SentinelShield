@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request , redirect,url_for
 from datetime import datetime
-from detector import detect_sql_injection
+from detector import detect_sql_injection,detect_xss,detect_path_traversal
 from database import get_statistics
 from functools import wraps
 from database import update_alert_info
@@ -117,6 +117,7 @@ def login():
 
         username = request.form["username"]
         password = request.form["password"]
+        xss_detected = detect_xss(username)
         #ip_address = request.remote_addr
         ip_address =  request.headers.get(
         "X-Forwarded-For",
@@ -146,6 +147,21 @@ def login():
         if detect_sql_injection(user_input):
             event = "SQL Injection Attempt Detected"
             severity = "HIGH"
+
+        elif  xss_detected:
+
+            event = "XSS Attempt"
+            severity = "HIGH"
+
+
+        elif  detect_path_traversal(username) or detect_path_traversal(password):
+
+            event = "Path Traversal Attempt"
+            severity = "HIGH"
+
+
+        
+
 
         else:
 
