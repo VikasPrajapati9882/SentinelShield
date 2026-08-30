@@ -1,0 +1,498 @@
+SENTINELSHIELD
+Advanced Security Monitoring and Intrusion Detection System
+Project Documentation
+
+============================================================
+1. PROJECT OVERVIEW
+============================================================
+
+SentinelShield is a web-based Security Operations Center (SOC) dashboard designed to monitor, detect, record, and visualize suspicious activities and common web application attacks.
+
+The project is built using Python Flask as the backend, HTML/CSS/JavaScript for the web interface, and MySQL for persistent storage of security alerts.
+
+The main purpose of SentinelShield is to demonstrate how a basic SOC monitoring system can collect security events, analyze suspicious input, store alerts, and present them to a security analyst through a centralized dashboard.
+
+============================================================
+2. WHY I CREATED SENTINELSHIELD
+============================================================
+
+In a real organization, applications continuously generate login attempts, requests, errors, and security-related events. Security analysts need a centralized system to identify suspicious activity and investigate possible attacks.
+
+SentinelShield was created to demonstrate this workflow in a simple and practical way:
+
+User Request
+    |
+    v
+Flask Application
+    |
+    v
+Security Detection
+    |
+    v
+Alert Generation
+    |
+    v
+MySQL Database
+    |
+    v
+SOC Dashboard
+    |
+    v
+Security Analyst Investigation
+
+The project helps demonstrate basic SOC concepts such as alert generation, severity classification, source IP logging, threat detection, incident monitoring, and security event visualization.
+
+============================================================
+3. MAIN FEATURES
+============================================================
+
+1. Login Monitoring
+   - Records login attempts.
+   - Captures username and source IP address.
+   - Records timestamp and event information.
+
+2. Security Attack Detection
+   SentinelShield contains detection logic for several common attack
+   indicators, including:
+   - SQL Injection
+   - Cross-Site Scripting (XSS)
+   - Path Traversal
+   - Brute Force Login Attempts
+
+3. Severity Classification
+   Security events can be classified according to their severity,
+   such as:
+   - LOW
+   - MEDIUM
+   - HIGH
+   - CRITICAL
+
+4. MySQL Database
+   Alerts are stored in a MySQL database so that they remain available
+   after the Flask application is restarted.
+
+5. SOC Dashboard
+   The dashboard displays:
+   - Total alerts
+   - Critical/high-severity events
+   - System status
+   - Recent security alerts
+   - Source IP addresses
+   - Event names
+   - Severity
+   - Timestamps
+
+6. Threat Intelligence
+   SentinelShield can be integrated with threat-intelligence services
+   such as VirusTotal and AbuseIPDB to investigate suspicious IP
+   addresses.
+
+7. Real-Time/Periodic Monitoring
+   The dashboard can refresh periodically to display newly recorded
+   security events.
+
+8. Role-Based Access
+   The project can support roles such as:
+   - Admin
+   - SOC Analyst
+
+============================================================
+4. TECHNOLOGIES USED
+============================================================
+
+Backend:
+- Python
+- Flask
+- Flask-SocketIO
+
+Frontend:
+- HTML
+- CSS
+- JavaScript
+- Chart.js (if enabled)
+
+Database:
+- MySQL
+
+Security/Threat Intelligence:
+- VirusTotal
+- AbuseIPDB
+
+Development Environment:
+- Visual Studio Code
+- Python Virtual Environment
+- Git/GitHub (if used)
+
+Testing/Exposure:
+- ngrok can be used during development to temporarily expose the
+  local Flask application for testing from another network.
+
+============================================================
+5. PROJECT STRUCTURE
+============================================================
+
+A typical SentinelShield project contains files similar to:
+
+SentinelShield/
+|
+|-- app.py
+|-- database.py
+|-- detector.py
+|-- threat_intel.py
+|-- logs.txt
+|-- templates/
+|   |-- login.html
+|   |-- dashboard.html
+|-- static/
+|   |-- CSS/JavaScript files (if used)
+|-- requirements.txt
+|-- venv/
+|-- database/
+|   |-- SQL backup (if maintained)
+
+The exact files may vary depending on the final submitted version.
+
+============================================================
+6. HOW SENTINELSHIELD WORKS
+============================================================
+
+STEP 1 - User opens the login page
+
+The user visits the SentinelShield login page and enters a username
+and password.
+
+STEP 2 - Flask receives the request
+
+The Flask application receives the POST request from the login form.
+
+STEP 3 - Source IP is identified
+
+The application obtains the client's source IP. When a reverse proxy
+such as ngrok is used, forwarded headers can be used to identify the
+original client IP.
+
+STEP 4 - Input is analyzed
+
+User-controlled input is passed through security detection functions.
+
+For example:
+- SQL injection detector
+- XSS detector
+- Path traversal detector
+- Other attack detectors
+
+STEP 5 - Brute-force activity is checked
+
+Failed authentication attempts can be counted by source IP. If the
+number of failed attempts reaches the configured threshold, the event
+can be classified as a possible brute-force attack.
+
+STEP 6 - Alert is generated
+
+When suspicious activity is detected, SentinelShield creates a
+security alert containing information such as:
+
+- Event
+- IP address
+- Username
+- Severity
+- Timestamp
+- Threat status
+- Threat score
+- Incident status
+
+STEP 7 - Alert is stored
+
+The alert is inserted into the MySQL alerts table.
+
+STEP 8 - SOC analyst views the alert
+
+The dashboard reads the alert information from MySQL and displays it
+in a centralized table.
+
+============================================================
+7. HOW TO RUN THE PROJECT
+============================================================
+
+STEP 1 - Install Python
+
+Make sure Python is installed on the system.
+
+Check:
+
+python --version
+
+or:
+
+python3 --version
+
+
+STEP 2 - Open the project folder
+
+Open the SentinelShield project in Visual Studio Code or a terminal.
+
+
+STEP 3 - Create/activate a virtual environment
+
+Windows:
+
+python -m venv venv
+
+Activate:
+
+venv\Scripts\activate
+
+
+STEP 4 - Install dependencies
+
+If requirements.txt exists:
+
+pip install -r requirements.txt
+
+Otherwise install the packages required by the final project, for
+example:
+
+pip install flask flask-socketio mysql-connector-python
+
+
+STEP 5 - Configure MySQL
+
+Create the database used by the project.
+
+Example:
+
+CREATE DATABASE sentinelshield;
+
+Create/import the required tables from the SQL file included with
+the project.
+
+Update the database connection settings in the project with:
+
+- Host
+- Username
+- Password
+- Database name
+- Port (if different from the default)
+
+
+STEP 6 - Configure threat intelligence APIs
+
+If threat intelligence features are enabled, configure the required
+API keys for services such as VirusTotal or AbuseIPDB.
+
+Do not publish API keys in GitHub or in the project documentation.
+
+
+STEP 7 - Start the Flask application
+
+Example:
+
+python app.py
+
+The terminal should show the local address configured by the
+application, commonly:
+
+http://127.0.0.1:5000
+
+
+STEP 8 - Open the application
+
+Open the displayed local URL in a web browser.
+
+Open the login page and test the application.
+
+============================================================
+8. HOW TO USE THE DASHBOARD
+============================================================
+
+1. Open the SentinelShield login page.
+2. Enter the required login information.
+3. Submit the form.
+4. The Flask application processes the request.
+5. Security detection logic analyzes the input.
+6. The event is stored in MySQL.
+7. The user is redirected to the dashboard.
+8. The SOC analyst can review the recorded event.
+
+The Recent Security Alerts section shows the security events in a
+table.
+
+Typical columns include:
+
+- Event
+- IP Address
+- Severity
+- Timestamp
+
+============================================================
+9. TESTING THE SECURITY DETECTION
+============================================================
+
+The detection functions are intended for controlled testing in your
+own application or an authorized lab environment.
+
+For example, a test can be performed by entering harmless test
+strings that match the detection rules and checking whether the
+application creates the expected alert.
+
+After a test:
+
+1. Open the SentinelShield dashboard.
+2. Check Recent Security Alerts.
+3. Verify the event name.
+4. Verify the source IP.
+5. Verify the severity.
+6. Verify the timestamp.
+7. Check the corresponding record in MySQL.
+
+Do not use SentinelShield to test systems that you do not own or do
+not have permission to assess.
+
+============================================================
+10. DATABASE AND ALERT PERSISTENCE
+============================================================
+
+MySQL provides persistent storage for SentinelShield.
+
+This is important because application memory is temporary.
+
+For example:
+
+Flask memory:
+- Data can disappear after an application restart.
+
+MySQL:
+- Alerts remain stored after the application restarts.
+
+The recommended flow is:
+
+Security Event
+      |
+      v
+Flask
+      |
+      v
+MySQL alerts table
+      |
+      v
+Dashboard
+
+Regular database backups should be maintained for important data.
+
+============================================================
+11. NGROK TESTING
+============================================================
+
+During development, ngrok can be used to expose the local Flask
+application temporarily so that another authorized tester can access
+it.
+
+Example:
+
+ngrok http 5000
+
+Important:
+
+When using a reverse proxy such as ngrok, request.remote_addr may
+show a local/proxy address such as 127.0.0.1 instead of the original
+client address.
+
+For this reason, the application can process trusted forwarded IP
+headers such as X-Forwarded-For.
+
+In production, proxy configuration must be handled carefully because
+client-controlled headers should not automatically be trusted unless
+they come from a trusted proxy.
+
+============================================================
+12. SECURITY LIMITATIONS
+============================================================
+
+SentinelShield uses rule-based detection. This means that detection
+patterns are not a replacement for a full enterprise IDS/IPS or
+commercial SOC platform.
+
+Possible limitations include:
+
+- False positives
+- False negatives
+- Encoded or obfuscated attack inputs
+- New attack techniques not covered by the rules
+- Proxy/IP attribution issues
+- In-memory brute-force counters resetting after application restart
+
+For production use, additional controls should be implemented,
+including:
+
+- Proper authentication and authorization
+- Password hashing
+- Rate limiting
+- Secure session management
+- Input validation
+- Output encoding
+- CSRF protection
+- Secure HTTP headers
+- Centralized logging
+- Log rotation
+- Database backups
+- Secure secret/API-key management
+- Trusted reverse-proxy configuration
+
+Detection should complement, not replace, secure application design.
+
+============================================================
+13. PROJECT OBJECTIVE
+============================================================
+
+The primary objective of SentinelShield is to demonstrate a practical
+security monitoring workflow using a web application.
+
+The project demonstrates how a security system can:
+
+- Collect security events
+- Detect suspicious activity
+- Classify event severity
+- Record source IP information
+- Store security alerts
+- Integrate threat intelligence
+- Display alerts through a SOC dashboard
+- Support security investigation
+
+============================================================
+14. FUTURE ENHANCEMENTS
+============================================================
+
+Possible future improvements include:
+
+- Machine-learning based anomaly detection
+- Advanced threat intelligence correlation
+- MITRE ATT&CK mapping
+- Interactive attack maps
+- Advanced incident management
+- Email/SMS security notifications
+- Automated IP blocking
+- SIEM integration
+- Log ingestion from multiple systems
+- Security analytics and reporting
+- PDF incident reports
+- Alert search and filtering
+- Alert acknowledgement and resolution workflow
+
+============================================================
+15. CONCLUSION
+============================================================
+
+SentinelShield is a practical cybersecurity project that demonstrates
+the basic operation of a Security Operations Center monitoring system.
+
+It combines a Flask web application, security detection logic,
+MySQL-based alert persistence, threat intelligence, and a SOC
+dashboard into one project.
+
+The project provides a foundation for understanding how security
+events can be detected, recorded, analyzed, and presented to a
+security analyst.
+
+============================================================
+END OF DOCUMENT
+============================================================
