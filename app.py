@@ -253,6 +253,11 @@ def dashboard():
          attack_statistics=attack_statistics
     )
 
+
+@app.route("/documentation")
+def vikas():
+    return render_template("project_documentation.html")
+
 if __name__ == "__main__":
     socketio.run(
         app,
