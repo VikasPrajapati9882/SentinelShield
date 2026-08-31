@@ -5,6 +5,7 @@ from database import get_statistics
 from functools import wraps
 from database import update_alert_info
 import time
+import os
 from flask import session
 from flask_socketio import SocketIO
 from database import get_attack_statistics
@@ -254,7 +255,7 @@ def dashboard():
 
 if __name__ == "__main__":
     socketio.run(
-        host='0.0.0.0',
         app,
-        debug=True
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000))
     )
