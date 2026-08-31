@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentinelShield - Project Documentation</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --card: #121a2d;
+            --card2: #18233b;
+            --text: #eef3ff;
+            --muted: #aab6cf;
+            --accent: #62a0ff;
+            --border: #2a3857;
+            --code: #090e19;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .hero {
+            padding: 70px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #101b35, #0b1020);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(38px, 7vw, 68px);
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            margin: 10px auto 0;
+            max-width: 800px;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .container {
+            width: min(1100px, calc(100% - 32px));
+            margin: 35px auto 70px;
+        }
+
+        .toc {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .toc h2 { margin-top: 0; }
+
+        .toc a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .toc a:hover { text-decoration: underline; }
+
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: var(--accent);
+            font-size: 27px;
+        }
+
+        .section h3 {
+            color: #dce7ff;
+            margin-top: 25px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+        }
+
+        .feature {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .feature strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #ffffff;
+        }
+
+        ul, ol { padding-left: 25px; }
+
+        li { margin: 7px 0; }
+
+        pre {
+            overflow-x: auto;
+            background: var(--code);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 12px;
+            color: #dce7ff;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .flow {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            font-family: Consolas, monospace;
+            white-space: pre-line;
+        }
+
+        .audio-card {
+            background: linear-gradient(135deg, #172542, #11192c);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .audio-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .audio-icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: var(--card2);
+            border: 1px solid var(--border);
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .audio-card h3 {
+            margin: 0 0 4px;
+            color: #ffffff;
+        }
+
+        .audio-description {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .custom-player {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(9, 14, 25, 0.75);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 17px;
+        }
+
+        .play-button {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #08101f;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .play-button:hover {
+            transform: scale(1.06);
+            opacity: 0.9;
+        }
+
+        .player-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 9px;
+            color: #eef3ff;
+            font-size: 14px;
+        }
+
+        #timeDisplay {
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .audio-tip {
+            margin-top: 17px;
+            padding: 14px 16px;
+            border-left: 4px solid var(--accent);
+            background: rgba(98, 160, 255, 0.08);
+            color: var(--muted);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            padding: 30px 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .section { padding: 20px; }
+            .hero { padding: 50px 15px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="hero">
+    <h1>SentinelShield</h1>
+    <p>Advanced Security Monitoring and Intrusion Detection System</p>
+    <p>Project Documentation</p>
+</header>
+
+<main class="container">
+
+    <section class="toc">
+        <h2>Documentation Contents</h2>
+        <ol>
+            <li><a href="#overview">Project Overview</a></li>
+            <li><a href="#why">Why I Created SentinelShield</a></li>
+            <li><a href="#features">Main Features</a></li>
+            <li><a href="#technologies">Technologies Used</a></li>
+            <li><a href="#structure">Project Structure</a></li>
+            <li><a href="#workflow">How SentinelShield Works</a></li>
+            <li><a href="#run">How to Run the Project</a></li>
+            <li><a href="#dashboard">How to Use the Dashboard</a></li>
+            <li><a href="#testing">Security Detection Testing</a></li>
+            <li><a href="#database">Database and Alert Persistence</a></li>
+            <li><a href="#ngrok">ngrok Testing</a></li>
+            <li><a href="#limitations">Security Limitations</a></li>
+            <li><a href="#objective">Project Objective</a></li>
+            <li><a href="#future">Future Enhancements</a></li>
+            <li><a href="#experience">My Experience & Learning</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+        </ol>
+    </section>
+
+    <section class="section" id="overview">
+        <h2>1. Project Overview</h2>
+        <p>
+            SentinelShield is a web-based Security Operations Center (SOC)
+            dashboard designed to monitor, detect, record, and visualize
+            suspicious activities and common web application attacks.
+        </p>
+        <p>
+            The project is built using Python Flask as the backend,
+            HTML/CSS/JavaScript for the web interface, and MySQL for
+            persistent storage of security alerts.
+        </p>
+        <p>
+            The main purpose of SentinelShield is to demonstrate how a basic
+            SOC monitoring system can collect security events, analyze
+            suspicious input, store alerts, and present them to a security
+            analyst through a centralized dashboard.
+        </p>
+    </section>
+
+    <section class="section" id="why">
+        <h2>2. Why I Created SentinelShield</h2>
+        <p>
+            In a real organization, applications continuously generate login
+            attempts, requests, errors, and security-related events. Security
+            analysts need a centralized system to identify suspicious activity
+            and investigate possible attacks.
+        </p>
+
+        <div class="flow">
+User Request
+    ↓
+Flask Application
+    ↓
+Security Detection
+    ↓
+Alert Generation
+    ↓
+MySQL Database
+    ↓
+SOC Dashboard
+    ↓
+Security Analyst Investigation
+        </div>
+
+        <p>
+            The project demonstrates basic SOC concepts such as alert
+            generation, severity classification, source IP logging,
+            threat detection, incident monitoring, and security event
+            visualization.
+        </p>
+    </section>
+
+    <section class="section" id="features">
+        <h2>3. Main Features</h2>
+
+        <div class="feature-grid">
+            <div class="feature">
+                <strong>Login Monitoring</strong>
+                Records login attempts, username, source IP, timestamp,
+                and event information.
+            </div>
+
+            <div class="feature">
+                <strong>Attack Detection</strong>
+                Detects indicators of SQL Injection, XSS, Path Traversal,
+                and Brute Force Login Attempts.
+            </div>
+
+            <div class="feature">
+                <strong>Severity Classification</strong>
+                Events can be classified as LOW, MEDIUM, HIGH, or CRITICAL.
+            </div>
+
+            <div class="feature">
+                <strong>MySQL Database</strong>
+                Stores security alerts persistently.
+            </div>
+
+            <div class="feature">
+                <strong>SOC Dashboard</strong>
+                Displays alerts, severity, IP addresses, timestamps,
+                system status, and security metrics.
+            </div>
+
+            <div class="feature">
+                <strong>Threat Intelligence</strong>
+                Can integrate with VirusTotal and AbuseIPDB for
+                suspicious IP investigation.
+            </div>
+
+            <div class="feature">
+                <strong>Real-Time / Periodic Monitoring</strong>
+                Allows newly recorded security events to appear on the
+                dashboard.
+            </div>
+
+            <div class="feature">
+                <strong>Role-Based Access</strong>
+                Supports roles such as Admin and SOC Analyst.
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="technologies">
+        <h2>4. Technologies Used</h2>
+
+        <h3>Backend</h3>
+        <ul>
+            <li>Python</li>
+            <li>Flask</li>
+            <li>Flask-SocketIO</li>
+        </ul>
+
+        <h3>Frontend</h3>
+        <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>Chart.js (if enabled)</li>
+        </ul>
+
+        <h3>Database</h3>
+        <ul>
+            <li>MySQL</li>
+        </ul>
+
+        <h3>Security / Threat Intelligence</h3>
+        <ul>
+            <li>VirusTotal</li>
+            <li>AbuseIPDB</li>
+        </ul>
+
+        <h3>Development Environment</h3>
+        <ul>
+            <li>Visual Studio Code</li>
+            <li>Python Virtual Environment</li>
+            <li>Git / GitHub (if used)</li>
+        </ul>
+
+        <h3>Testing / Exposure</h3>
+        <ul>
+            <li>ngrok can be used during development to temporarily expose
+                the local Flask application for authorized testing.</li>
+        </ul>
+    </section>
+
+    <section class="section" id="structure">
+        <h2>5. Project Structure</h2>
+<pre><code>SentinelShield/
+|
+|-- app.py
+|-- database.py
+|-- detector.py
+|-- threat_intel.py
+|-- logs.txt
+|-- templates/
+|   |-- login.html
+|   |-- dashboard.html
+|-- static/
+|   |-- CSS/JavaScript files
+|-- requirements.txt
+|-- venv/
+|-- database/
+|   |-- SQL backup</code></pre>
+        <p>
+            The exact files may vary depending on the final submitted version.
+        </p>
+    </section>
+
+    <section class="section" id="workflow">
+        <h2>6. How SentinelShield Works</h2>
+
+        <h3>Step 1 - User opens the login page</h3>
+        <p>The user visits the SentinelShield login page and enters a username and password.</p>
+
+        <h3>Step 2 - Flask receives the request</h3>
+        <p>The Flask application receives the POST request from the login form.</p>
+
+        <h3>Step 3 - Source IP is identified</h3>
+        <p>
+            The application obtains the client's source IP. When a reverse
+            proxy such as ngrok is used, forwarded headers can be used to
+            identify the original client IP.
+        </p>
+
+        <h3>Step 4 - Input is analyzed</h3>
+        <p>User-controlled input is passed through security detection functions.</p>
+        <ul>
+            <li>SQL injection detector</li>
+            <li>XSS detector</li>
+            <li>Path traversal detector</li>
+            <li>Other attack detectors</li>
+        </ul>
+
+        <h3>Step 5 - Brute-force activity is checked</h3>
+        <p>
+            Failed authentication attempts can be counted by source IP.
+            If the number of failed attempts reaches the configured
+            threshold, the event can be classified as a possible
+            brute-force attack.
+        </p>
+
+        <h3>Step 6 - Alert is generated</h3>
+        <p>An alert can contain:</p>
+        <ul>
+            <li>Event</li>
+            <li>IP address</li>
+            <li>Username</li>
+            <li>Severity</li>
+            <li>Timestamp</li>
+            <li>Threat status</li>
+            <li>Threat score</li>
+            <li>Incident status</li>
+        </ul>
+
+        <h3>Step 7 - Alert is stored</h3>
+        <p>The alert is inserted into the MySQL alerts table.</p>
+
+        <h3>Step 8 - SOC analyst views the alert</h3>
+        <p>
+            The dashboard reads alert information from MySQL and displays
+            it in a centralized interface.
+        </p>
+    </section>
+
+    <section class="section" id="run">
+        <h2>7. How to Run the Project</h2>
+
+        <h3>Step 1 - Install Python</h3>
+        <pre><code>python --version</code></pre>
+
+        <h3>Step 2 - Open the project folder</h3>
+        <p>
+            Open the SentinelShield project in Visual Studio Code or a terminal.
+        </p>
+
+        <h3>Step 3 - Create and activate a virtual environment</h3>
+<pre><code>python -m venv venv
+
+# Windows
+venv\Scripts\activate</code></pre>
+
+        <h3>Step 4 - Install dependencies</h3>
+<pre><code>pip install -r requirements.txt</code></pre>
+
+        <p>If requirements.txt is not available:</p>
+<pre><code>pip install flask flask-socketio mysql-connector-python</code></pre>
+
+        <h3>Step 5 - Configure MySQL</h3>
+<pre><code>CREATE DATABASE sentinelshield;</code></pre>
+
+        <p>
+            Create or import the required tables from the SQL file included
+            with the project. Update the database connection settings with
+            the correct host, username, password, database name, and port.
+        </p>
+
+        <h3>Step 6 - Configure Threat Intelligence APIs</h3>
+        <p>
+            If enabled, configure the required VirusTotal or AbuseIPDB API
+            keys. Never publish API keys in GitHub or project documentation.
+        </p>
+
+        <h3>Step 7 - Start Flask</h3>
+<pre><code>python app.py</code></pre>
+
+        <h3>Step 8 - Open the application</h3>
+        <p>
+            Open the local URL displayed by Flask, commonly
+            <code>http://127.0.0.1:5000</code>.
+        </p>
+    </section>
+
+    <section class="section" id="dashboard">
+        <h2>8. How to Use the Dashboard</h2>
+        <ol>
+            <li>Open the SentinelShield login page.</li>
+            <li>Enter the required login information.</li>
+            <li>Submit the form.</li>
+            <li>Flask processes the request.</li>
+            <li>Security detection logic analyzes the input.</li>
+            <li>The event is stored in MySQL.</li>
+            <li>The user is redirected to the dashboard.</li>
+            <li>The SOC analyst reviews the recorded event.</li>
+        </ol>
+
+        <p>Typical alert columns include:</p>
+        <ul>
+            <li>Event</li>
+            <li>IP Address</li>
+            <li>Severity</li>
+            <li>Timestamp</li>
+        </ul>
+    </section>
+
+    <section class="section" id="testing">
+        <h2>9. Testing the Security Detection</h2>
+        <p>
+            Detection functions should be tested only against your own
+            application or an authorized lab environment.
+        </p>
+
+        <ol>
+            <li>Perform a controlled test using harmless test strings that match the detection rules.</li>
+            <li>Open the SentinelShield dashboard.</li>
+            <li>Check Recent Security Alerts.</li>
+            <li>Verify the event name.</li>
+            <li>Verify the source IP.</li>
+            <li>Verify severity and timestamp.</li>
+            <li>Verify the corresponding record in MySQL.</li>
+        </ol>
+
+        <div class="tip">
+            <strong>Security note:</strong> Do not use SentinelShield to test
+            systems that you do not own or do not have permission to assess.
+        </div>
+    </section>
+
+    <section class="section" id="database">
+        <h2>10. Database and Alert Persistence</h2>
+        <p>
+            MySQL provides persistent storage for SentinelShield. This is
+            important because application memory is temporary.
+        </p>
+
+        <div class="flow">
+Security Event
+      ↓
+Flask
+      ↓
+MySQL alerts table
+      ↓
+SOC Dashboard
+        </div>
+
+        <p>
+            Alerts remain stored after the Flask application restarts,
+            provided that the database is maintained correctly. Regular
+            database backups should be maintained for important data.
+        </p>
+    </section>
+
+    <section class="section" id="ngrok">
+        <h2>11. ngrok Testing</h2>
+        <p>
+            During development, ngrok can temporarily expose the local Flask
+            application for authorized testing.
+        </p>
+
+<pre><code>ngrok http 5000</code></pre>
+
+        <p>
+            When a reverse proxy such as ngrok is used, <code>request.remote_addr</code>
+            may show a proxy or local address instead of the original client
+            address. Trusted forwarded headers can be processed when the
+            proxy configuration is properly controlled.
+        </p>
+
+        <div class="tip">
+            In production, do not blindly trust client-supplied forwarded
+            headers. Only trust headers from a correctly configured trusted proxy.
+        </div>
+    </section>
+
+    <section class="section" id="limitations">
+        <h2>12. Security Limitations</h2>
+        <p>
+            SentinelShield uses rule-based detection. It is a learning and
+            demonstration project and is not a replacement for a full
+            enterprise IDS/IPS or commercial SOC platform.
+        </p>
+
+        <ul>
+            <li>False positives</li>
+            <li>False negatives</li>
+            <li>Encoded or obfuscated attack inputs</li>
+            <li>New attack techniques not covered by rules</li>
+            <li>Proxy/IP attribution issues</li>
+            <li>In-memory brute-force counters may reset after restart</li>
+        </ul>
+
+        <h3>Recommended production controls</h3>
+        <ul>
+            <li>Proper authentication and authorization</li>
+            <li>Password hashing</li>
+            <li>Rate limiting</li>
+            <li>Secure session management</li>
+            <li>Input validation</li>
+            <li>Output encoding</li>
+            <li>CSRF protection</li>
+            <li>Secure HTTP headers</li>
+            <li>Centralized logging</li>
+            <li>Log rotation</li>
+            <li>Database backups</li>
+            <li>Secure API-key and secret management</li>
+            <li>Trusted reverse-proxy configuration</li>
+        </ul>
+    </section>
+
+    <section class="section" id="objective">
+        <h2>13. Project Objective</h2>
+        <p>
+            The primary objective of SentinelShield is to demonstrate a
+            practical security monitoring workflow using a web application.
+        </p>
+
+        <ul>
+            <li>Collect security events</li>
+            <li>Detect suspicious activity</li>
+            <li>Classify event severity</li>
+            <li>Record source IP information</li>
+            <li>Store security alerts</li>
+            <li>Integrate threat intelligence</li>
+            <li>Display alerts through a SOC dashboard</li>
+            <li>Support security investigation</li>
+        </ul>
+    </section>
+
+    <section class="section" id="future">
+        <h2>14. Future Enhancements</h2>
+        <ul>
+            <li>Machine-learning based anomaly detection</li>
+            <li>Advanced threat intelligence correlation</li>
+            <li>MITRE ATT&CK mapping</li>
+            <li>Interactive attack maps</li>
+            <li>Advanced incident management</li>
+            <li>Email/SMS security notifications</li>
+            <li>Automated IP blocking</li>
+            <li>SIEM integration</li>
+            <li>Log ingestion from multiple systems</li>
+            <li>Security analytics and reporting</li>
+            <li>PDF incident reports</li>
+            <li>Alert search and filtering</li>
+            <li>Alert acknowledgement and resolution workflow</li>
+        </ul>
+    </section>
+
+    <section class="section" id="experience">
+        <h2>15. My Experience & Learning</h2>
+
+        <div class="audio-card">
+            <div class="audio-header">
+                <div class="audio-icon">🎙️</div>
+                <div>
+                    <h3>Project Feedback & Learning</h3>
+                    <p class="audio-description">
+                        Listen to my experience, challenges, and key learnings
+                        while developing the SentinelShield project.
+                    </p>
+                </div>
+            </div>
+
+            <div class="custom-player">
+                <button class="play-button" id="playButton" aria-label="Play audio">
+                    ▶
+                </button>
+
+                <div class="player-content">
+                    <div class="track-info">
+                        <span>Project Feedback & Learning</span>
+                        <span id="timeDisplay">0:00 / 0:00</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="progressBar"
+                        class="progress-bar"
+                        value="0"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        aria-label="Audio progress"
+                    >
+                </div>
+            </div>
+
+            <!-- Keep experience.mp3 in the same folder as this HTML file -->
+            <audio id="experienceAudio" preload="metadata">
+                <source src="experience.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+
+            <div class="audio-tip">
+                <strong>🎧 About this recording:</strong>
+                This recording explains my practical experience with
+                cybersecurity, SOC monitoring, attack detection, Flask,
+                MySQL, threat intelligence, and the challenges I faced
+                while building SentinelShield.
+            </div>
+        </div>
+
+        <h3>Key Learning Areas</h3>
+        <ul>
+            <li>Understanding SOC monitoring and security alert management</li>
+            <li>Detecting SQL Injection, XSS, Path Traversal and Brute Force indicators</li>
+            <li>Building a web application using Python Flask</li>
+            <li>Storing and managing security alerts using MySQL</li>
+            <li>Understanding source IP monitoring and security events</li>
+            <li>Using threat intelligence for suspicious IP investigation</li>
+            <li>Understanding incident severity and investigation workflow</li>
+            <li>Troubleshooting real development and deployment issues</li>
+            <li>Applying cybersecurity concepts in a practical project</li>
+        </ul>
+    </section>
+
+    <section class="section" id="conclusion">
+        <h2>16. Conclusion</h2>
+        <p>
+            SentinelShield is a practical cybersecurity project that
+            demonstrates the basic operation of a Security Operations Center
+            monitoring system.
+        </p>
+        <p>
+            It combines a Flask web application, security detection logic,
+            MySQL-based alert persistence, threat intelligence, and a SOC
+            dashboard into one project.
+        </p>
+        <p>
+            The project provides a foundation for understanding how security
+            events can be detected, recorded, analyzed, and presented to a
+            security analyst.
+        </p>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>SentinelShield — Advanced Security Monitoring and Intrusion Detection System</p>
+    <p>Project Documentation</p>
+</footer>
+
+<script>
+    const audio = document.getElementById("experienceAudio");
+    const playButton = document.getElementById("playButton");
+    const progressBar = document.getElementById("progressBar");
+    const timeDisplay = document.getElementById("timeDisplay");
+
+    function formatTime(seconds) {
+        if (!Number.isFinite(seconds)) return "0:00";
+
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+
+        return minutes + ":" + String(remainingSeconds).padStart(2, "0");
+    }
+
+    function updateTime() {
+        const current = audio.currentTime || 0;
+        const duration = audio.duration || 0;
+
+        timeDisplay.textContent =
+            formatTime(current) + " / " + formatTime(duration);
+
+        if (duration > 0) {
+            progressBar.value = (current / duration) * 100;
+        }
+    }
+
+    playButton.addEventListener("click", function () {
+        if (audio.paused) {
+            audio.play().catch(() => {
+                alert("Unable to play the audio. Please make sure experience.mp3 is in the same folder as this HTML file.");
+            });
+        } else {
+            audio.pause();
+        }
+    });
+
+    audio.addEventListener("play", function () {
+        playButton.textContent = "❚❚";
+        playButton.setAttribute("aria-label", "Pause audio");
+    });
+
+    audio.addEventListener("pause", function () {
+        playButton.textContent = "▶";
+        playButton.setAttribute("aria-label", "Play audio");
+    });
+
+    audio.addEventListener("ended", function () {
+        playButton.textContent = "▶";
+        progressBar.value = 0;
+        timeDisplay.textContent =
+            "0:00 / " + formatTime(audio.duration);
+    });
+
+    audio.addEventListener("loadedmetadata", updateTime);
+    audio.addEventListener("timeupdate", updateTime);
+
+    progressBar.addEventListener("input", function () {
+        if (audio.duration) {
+            audio.currentTime =
+                (progressBar.value / 100) * audio.duration;
+        }
+    });
+</script>
+
+</body>
+</html>
