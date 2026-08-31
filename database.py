@@ -5,10 +5,10 @@ def get_connection():
 
     connection = mysql.connector.connect(
 
-        host="localhost",
-        user="root",
-        password="vikas1234",
-        database="sentinelshield"
+        host="sql.freedb.tech",
+        user="u_VMJUZx",
+        password="TtcGf47cAxTt",
+        database="freedb_bmXdWHJA"
 
     )
 
