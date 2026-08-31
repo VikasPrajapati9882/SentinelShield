@@ -92,3 +92,7 @@ wikipedia==1.4.0
 wsproto==1.2.0
 xyzservices==2025.4.0
 yt-dlp==2025.7.21
+gunicorn
+eventlet
+flask
+flask-socketio
