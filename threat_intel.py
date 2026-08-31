@@ -29,8 +29,9 @@ def check_ip(ip_address):
 
     data = response.json()
 
-
-    score = data["data"]["abuseConfidenceScore"]
+    score = 0
+    
+    # score = data["data"]["abuseConfidenceScore"]
 
 
     if score > 50:
