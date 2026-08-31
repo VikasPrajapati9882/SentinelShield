@@ -254,6 +254,7 @@ def dashboard():
 
 if __name__ == "__main__":
     socketio.run(
+        host='0.0.0.0',
         app,
         debug=True
     )
